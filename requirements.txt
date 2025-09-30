@@ -1,0 +1,13 @@
+# Core dependencies
+fastapi
+uvicorn[standard]
+pydantic-settings
+requests
+
+# LlamaIndex
+llama-index
+llama-index-llms-openai
+llama-index-llms-ollama
+
+# Optional: for development
+python-dotenv
