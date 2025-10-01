@@ -40,6 +40,10 @@ def get_available_models(provider: str) -> List[Dict[str, str]]:
             {"id": "llama-3.1-70b-versatile", "name": "Llama 3.1 70B"},
             {"id": "llama-3.1-8b-instant", "name": "Llama 3.1 8B"},
             {"id": "qwen/qwen3-32b", "name": "qwen3-32b"},
+            {"id": "deepseek-r1-distill-llama-70b", "name": "DeepSeek R1 Distill Llama 70B"},
+            {"id": "groq/compound", "name": "groq-compound"},
+            {"id": "openai/gpt-oss-120b", "name": "gpt-oss-120b"},
+            {"id": "openai/gpt-oss-20b", "name": "gpt-oss-20b"},
             {"id": "gemma2-9b-it", "name": "Gemma 2 9B"},
         ]
     elif provider == "sambanova":
