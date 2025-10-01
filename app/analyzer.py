@@ -1,12 +1,17 @@
+import json
 from typing import Dict, List
-from llama_index.core import Document, VectorStoreIndex, Settings
+from llama_index.core import Document, Settings
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.core.llms import LLM
+from llama_index.core.schema import TextNode
 from llama_index.llms.openai import OpenAI
 from llama_index.llms.ollama import Ollama
+from llama_index.llms.groq import Groq
+from llama_index.llms.gemini import Gemini
+from llama_index.core.llms import LLM
 from llama_index.core.prompts import PromptTemplate
-import json
 from app.config import settings
+
+# analyzer.py
 
 ANALYSIS_PROMPT = PromptTemplate(
     """You are a literary analyst. Extract character information from this text excerpt.
@@ -46,9 +51,10 @@ Text to analyze:
 )
 
 class BookAnalyzer:
-    def __init__(self, provider: str = None):
-        """Initialize the analyzer with specified LLM provider."""
+    def __init__(self, provider: str = None, model: str = None):
+        """Initialize the analyzer with specified LLM provider and model."""
         self.provider = provider or settings.PROVIDER
+        self.model = model
         self.llm = self._setup_llm()
         
         # Configure LlamaIndex settings
@@ -58,18 +64,39 @@ class BookAnalyzer:
     
     def _setup_llm(self) -> LLM:
         """Set up the LLM based on provider."""
-        if self.provider == "gpt":
+        if self.provider == "openai":
             return OpenAI(
                 api_key=settings.OPENAI_API_KEY,
-                model=settings.MODEL_NAME,
+                model=self.model or settings.OPENAI_MODEL,
+                temperature=settings.TEMPERATURE,
+            )
+        elif self.provider == "groq":
+            return Groq(
+                api_key=settings.GROQ_API_KEY,
+                model=self.model or settings.GROQ_MODEL,
+                temperature=settings.TEMPERATURE,
+            )
+        elif self.provider == "gemini":
+            return Gemini(
+                api_key=settings.GEMINI_API_KEY,
+                model=self.model or settings.GEMINI_MODEL,
                 temperature=settings.TEMPERATURE,
             )
         elif self.provider == "ollama":
             return Ollama(
                 base_url=settings.OLLAMA_BASE_URL,
-                model=settings.OLLAMA_MODEL,
+                model=self.model or settings.OLLAMA_MODEL,
                 temperature=settings.TEMPERATURE,
                 request_timeout=120.0,
+                json_mode=True,
+            )
+        elif self.provider == "sambanova":
+            # SambaNova uses OpenAI-compatible API
+            return OpenAI(
+                api_key=settings.SAMBANOVA_API_KEY,
+                api_base=settings.SAMBANOVA_API_URL.replace("/chat/completions", ""),
+                model=self.model or settings.SAMBANOVA_MODEL,
+                temperature=settings.TEMPERATURE,
             )
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
@@ -112,13 +139,11 @@ class BookAnalyzer:
         
         # Clean up response - handle various markdown/formatting
         if "```json" in content:
-            # Extract content between ```json and ```
             start = content.find("```json") + 7
             end = content.find("```", start)
             if end != -1:
                 content = content[start:end]
         elif "```" in content:
-            # Extract content between ``` markers
             parts = content.split("```")
             if len(parts) >= 2:
                 content = parts[1]
