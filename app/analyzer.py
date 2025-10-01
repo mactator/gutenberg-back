@@ -159,6 +159,13 @@ class BookAnalyzer:
             end = content.rfind("}")
             if end != -1:
                 content = content[:end+1]
+
+        # 🔧 Fix: handle double curly braces {{ ... }}
+        if content.startswith("{{") and content.endswith("}}"):
+            content = content[1:-1].strip()
+        else:
+            # More general fix (safe since we expect JSON only)
+            content = content.replace("{{", "{").replace("}}", "}")
         
         try:
             parsed = json.loads(content)
@@ -173,6 +180,7 @@ class BookAnalyzer:
             print(f"Raw response: {response.text[:500]}")
             print(f"Cleaned content: {content[:500]}")
             return {"characters": [], "interactions": []}
+
     
     def _merge_results(self, results: List[Dict]) -> Dict:
         """Merge character and interaction data from multiple chunks."""

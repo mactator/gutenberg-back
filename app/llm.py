@@ -39,7 +39,7 @@ def get_available_models(provider: str) -> List[Dict[str, str]]:
             {"id": "llama-3.3-70b-versatile", "name": "Llama 3.3 70B"},
             {"id": "llama-3.1-70b-versatile", "name": "Llama 3.1 70B"},
             {"id": "llama-3.1-8b-instant", "name": "Llama 3.1 8B"},
-            {"id": "mixtral-8x7b-32768", "name": "Mixtral 8x7B"},
+            {"id": "qwen/qwen3-32b", "name": "qwen3-32b"},
             {"id": "gemma2-9b-it", "name": "Gemma 2 9B"},
         ]
     elif provider == "sambanova":
