@@ -146,17 +146,6 @@ Find more at [gutenberg.org](https://www.gutenberg.org)
 - Use a faster model like `gpt-4o-mini` or `llama-3.1-8b-instant`
 - Reduce chunk size in `.env`: `CHUNK_SIZE=1024`
 
-**SambaNova model errors**
-- Use the exact model names from `/api/models?provider=sambanova`
-- Example: `Meta-Llama-3.1-8B-Instruct`
-
-## What's Next?
-
-This API returns character networks as JSON. You can:
-- Build a web frontend with D3.js or Cytoscape for visualization
-- Create a graph database of book characters
-- Compare character networks across different books
-- Use it for literature analysis or research
 
 ## License
 
